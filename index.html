@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>3 screen app</title>
+	<title>Traffic Crashes Finder App</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
 	 crossorigin="anonymous">
 
@@ -33,7 +33,7 @@
         <a class="nav-link" href="#search">Search <span class="sr-only">(current)</span></a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#list">List</a>
+        <a class="nav-link" href="#list">Search History</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="#map">Map</a>
@@ -47,11 +47,14 @@
   <div class="content" id="search">
     Search page
       <br>
-      <input type = "text" onfocus="this.value=''" id="ward" placeholder="Enter a ward"><br>
-      <input type = "text" onfocus="this.value=''" id="status" placeholder="Enter status"><br>
+      <input type = "text" onfocus="this.value=''" id="beat" placeholder="Enter a beat">
       <br>
       <button id = "Search">
           Search
+      </button>
+      
+      <button id="save">
+          Save
       </button>
   </div>
   <div class="content" id="list">
@@ -63,48 +66,94 @@
     <div class="content" id="about">
     This is about page
   </div>
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-      
+    
     <div class="card template" style="width: 18rem;">
     <div class="card-body">
-       <h5 class="card-title">Card title</h5>
+       <h5 class="card-title"></h5>
        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
        <p class="card-text1"></p>
        <p class="card-text2"></p>
        <p class="card-text3"></p>
        <p class="card-text4"></p>
-       <p class="card-text5"></p>
-       <p class="card-text6"></p>
-       <p class="card-text7"></p>
+<!--        <p class="card-text5"></p> -->
     </div>
 </div>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
     
-
+    <!-- Include Dexie -->
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
     <script>
+    var db = new Dexie("crashes_db");
+    db.version(1).stores({
+      crashes: "++id, beat"
+    });
+        
       $(document).ready(function() {
         
         $("#search").show();
         function hideScreens() {
-          $("content").hide();
+          $(".content").hide();
+        }
+        
+        function loadHistoryList() {
+            //clear list 
+            $("#list").empty();
+            //loop through database
+            db.crashes.each(function(crash) {
+                var p = $("<p>");
+                p.text(crash.beat);
+                $("#list").append(p);
+            });
         }
 
         $(".nav-link").on("click", function(){
           hideScreens();
           var target = $(this).attr("href");
           $(target).show();
+            
+          if(target == "#list") {
+              loadHistoryList();
+          }
         });
           
         $("#Search").on("click", function() {
             //clear the list
             $("#list").empty();
-          
             $("#list").show();
-        })
+            
+            var url = "https://data.cityofchicago.org/resource/85ca-t3if.json?$limit=10&beat_of_occurrence=" + $("#beat").val();
+            //retrieve data from endpoint
+            
+            var url2 = "https://data.cityofchicago.org/resource/u6pd-qa9d.json"
+            $.get(url, function(data)
+            {
+                console.log(data);
+                $.each(data, function(i,v) {
+                    //clone card
+                    var clone = $(".template").clone();
+                    //update values
+                    clone.find(".card-title").text(v.beat_of_occurrence);
+                    clone.find(".card-subtitle").text(v.street_no + " " + v.street_direction + " " + v.street_name);
+                    clone.find(".card-text1").text("Report No: " + v.rd_no);
+                    clone.find(".card-text2").text("Crash Date & Time: " + v.crash_date);
+                    clone.find(".card-text3").text("Crash Type: " + v.crash_type);
+                    clone.find(".card-text4").text("Damage: " + v.damage);
+                    //clone.find(".card-text5").text("Weather Condition: " + v.weather_condition);
+                    
+                    clone.removeClass("template");
+                    
+                    // insert into DOM
+                    $("#list").append(clone);
+                });
+            })
+         })
           
-
+         $("#save").on("click", function() {
+             var beat = $("#beat").val();
+             db.crashes.put({beat: beat});
+         })
+          
       });
     </script>
 
