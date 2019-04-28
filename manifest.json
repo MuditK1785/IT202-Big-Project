@@ -1,6 +1,6 @@
 {
-  "name": "My Cool App",
-  "short_name": "My Cool App",
+  "name": "Traffic Crashes Finder App",
+  "short_name": "Traffic Crashes Finder App",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "navy",
@@ -11,4 +11,11 @@
     "type": "image/png"
   }],
   "related_applications": []
+    "prefer_related_applications": false,
+    "related_applications": [
+      {
+        "platform": "play",
+        "id": "com.google.samples.apps.iosched"
+      }
+    ]
 }
