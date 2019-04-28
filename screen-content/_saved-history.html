@@ -1,0 +1,25 @@
+<h3 class="mdc-typography--headline3">Saved History</h3>
+<p>This page describes the beat searches you saved</p>
+<div class="content" id="list">
+</div>
+
+<script>
+$(document).ready(function() {
+    
+       function loadHistoryList() {
+            //clear list 
+            $("#list").empty();
+            //loop through database
+            db.crashes.each(function(crash) {
+                var p = $("<p>");
+                p.text(crash.beat);
+                $("#list").append(p);
+            });
+        }
+    loadHistoryList();
+})
+</script>
+
+
+
+

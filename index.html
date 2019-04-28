@@ -4,159 +4,70 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
-	<title>Traffic Crashes Finder App</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-	 crossorigin="anonymous">
+  	<meta name="google-signin-client_id" content="455879692718-31a814ua0ch6tal2errkrtf4976ckq1h.apps.googleusercontent.com">
 
-
-	<style>
-		.content {
-			display: none;
-			margin: 1em;
-		}
-        .template {
-            display: none;
-        }
-	</style>
-
+	<title>Traffic Crashes Finder</title>
+	<link rel="manifest" href="./manifest.json">
+	
+	<link rel="stylesheet" href="https://unpkg.com/material-components-web@0.40.0/dist/material-components-web.min.css" />
+	<link href="style.css" rel="stylesheet" type="text/css" />
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="#">Navbar</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-    </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#search">Search <span class="sr-only">(current)</span></a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#list">Search History</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#map">Map</a>
-      </li>
-        <li class="nav-item">
-        <a class="nav-link" href="#about">About</a>
-      </li>
-    </ul>
+	<!-- top nav bar -->
+	<header class="mdc-top-app-bar">
+		<div class="mdc-top-app-bar__row">
+			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-start">
+				<a href="#" class="material-icons mdc-top-app-bar__navigation-icon">menu</a>
+				<span class="mdc-top-app-bar__title">Traffic Crashes Finder</span>
+			</section>
+		</div>
+	</header>
+                                   
+	<!-- the navigation drawer -->
+	<aside class="mdc-drawer mdc-drawer--modal" data-mdc-auto-init="MDCDrawer">
+		<div class="mdc-drawer__content">
+			<nav class="mdc-list">
+				<a data-screen="home" class="mdc-list-item mdc-list-item--activated" href="#" tabindex="0" aria-selected="true"><i class="material-icons mdc-list-item__graphic" aria-hidden="true"></i>Search</a>
+				
+			</nav>
+		</div>
+	</aside>
+	
+  
+  <div class="mdc-drawer-scrim"></div>
+	<div id="contentArea">
+    <div class="mdc-top-app-bar--fixed-adjust"></div>
+    <div id="content" class="mdc-typography--body1"></div>
   </div>
-  </nav>
-  <div class="content" id="search">
-    Search page
-      <br>
-      <input type = "text" onfocus="this.value=''" id="beat" placeholder="Enter a beat">
-      <br>
-      <button id = "Search">
-          Search
-      </button>
-      
-      <button id="save">
-          Save
-      </button>
-  </div>
-  <div class="content" id="list">
-   List Page
-  </div>
-  <div class="content" id="map">
-    map page
-  </div>
-    <div class="content" id="about">
-    This is about page
-  </div>
-    
-    <div class="card template" style="width: 18rem;">
-    <div class="card-body">
-       <h5 class="card-title"></h5>
-       <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-       <p class="card-text1"></p>
-       <p class="card-text2"></p>
-       <p class="card-text3"></p>
-       <p class="card-text4"></p>
-<!--        <p class="card-text5"></p> -->
-    </div>
-</div>
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    
-    <!-- Include Dexie -->
+	
+  
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/material-components-web@0.40.0/dist/material-components-web.min.js"></script>
+	<script src="script.js"></script>
     <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
-    <script>
-    var db = new Dexie("crashes_db");
-    db.version(1).stores({
-      crashes: "++id, beat"
-    });
-        
-      $(document).ready(function() {
-        
-        $("#search").show();
-        function hideScreens() {
-          $(".content").hide();
-        }
-        
-        function loadHistoryList() {
-            //clear list 
-            $("#list").empty();
-            //loop through database
-            db.crashes.each(function(crash) {
-                var p = $("<p>");
-                p.text(crash.beat);
-                $("#list").append(p);
-            });
-        }
+  <!-- putting the Google library scripts at the top level due to use across screens -->
+  
+  <script src="https://apis.google.com/js/platform.js"></script>
+  
+  <script src="https://apis.google.com/js/api.js"></script>
 
-        $(".nav-link").on("click", function(){
-          hideScreens();
-          var target = $(this).attr("href");
-          $(target).show();
-            
-          if(target == "#list") {
-              loadHistoryList();
-          }
-        });
-          
-        $("#Search").on("click", function() {
-            //clear the list
-            $("#list").empty();
-            $("#list").show();
-            
-            var url = "https://data.cityofchicago.org/resource/85ca-t3if.json?$limit=10&beat_of_occurrence=" + $("#beat").val();
-            //retrieve data from endpoint
-            
-            var url2 = "https://data.cityofchicago.org/resource/u6pd-qa9d.json"
-            $.get(url, function(data)
-            {
-                console.log(data);
-                $.each(data, function(i,v) {
-                    //clone card
-                    var clone = $(".template").clone();
-                    //update values
-                    clone.find(".card-title").text(v.beat_of_occurrence);
-                    clone.find(".card-subtitle").text(v.street_no + " " + v.street_direction + " " + v.street_name);
-                    clone.find(".card-text1").text("Report No: " + v.rd_no);
-                    clone.find(".card-text2").text("Crash Date & Time: " + v.crash_date);
-                    clone.find(".card-text3").text("Crash Type: " + v.crash_type);
-                    clone.find(".card-text4").text("Damage: " + v.damage);
-                    //clone.find(".card-text5").text("Weather Condition: " + v.weather_condition);
-                    
-                    clone.removeClass("template");
-                    
-                    // insert into DOM
-                    $("#list").append(clone);
-                });
-            })
-         })
-          
-         $("#save").on("click", function() {
-             var beat = $("#beat").val();
-             db.crashes.put({beat: beat});
-         })
-          
-      });
-    </script>
+  <script>
+  	if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js')
+  .then(function(reg) {
+    // registration worked
+    console.log('Registration succeeded. Scope is ' + reg.scope);
+  }).catch(function(error) {
+    // registration failed
+    console.log('Registration failed with ' + error);
+  });
+}
+  </script>
 
 
-  </body>
+</body>
+
 </html>
