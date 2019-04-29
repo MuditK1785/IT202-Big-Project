@@ -1,9 +1,3 @@
-<!-- <div id="screenContent">
-<ul class="mdc-list demo-list mdc-list--two-line">
-  <li class="template mdc-list-item mdc-ripple-upgraded" tabindex="-1"><span class="mdc-list-item__text"><span class="mdc-list-item__primary-text">Line item</span><span class="mdc-list-item__secondary-text">Secondary text</span></span></li>
-</ul>
-</div> -->
-
 <style>
       /* Set the size of the div element that contains the map */
       #map {
@@ -22,6 +16,8 @@
           </button>
           <br>
           <p>This map shows the current traffic accidents and construction sites in chicago</p>
+          <p>Red markers represent accidents and construction sites</p>
+          <p>Blue marker represents location of user. Zoom in and click on marker to see coordinates</p>
           <p id = "status"></p>
       </div>
 
@@ -29,25 +25,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 <script>
-// var resources = [
-//   {name:"jQuery",url: "http://jquery.com/", desc: "JS Library that makes our coding lives easier", tags:"script"},
-//  {name:"Material Components for the Web",url: "https://material.io/develop/web/", desc: "HTML/CSS/JS implementation of Google's Material Design", tags:"UI"}
-//   ];
-
-
-// $.each(resources, function(i,v){
-//   var clone = $("#screenContent li.template").clone();
-//   clone.find(".mdc-list-item__primary-text").text(v.name);
-//   clone.find(".mdc-list-item__secondary-text").text(v.desc);
-//   clone.removeClass("template");
-//   clone.attr("id", v.name);
-//   $("#screenContent ul").append(clone);  
-// });
-    
-
     var map, infoWindow;
-    var myLocation = {};
-    
     function initMap() {
         // The location of chicago
         var chicago = {lat: 41.8781, lng: -87.6298};
@@ -66,11 +44,7 @@
 
       }
     
-    
-    initMap();
-    
       $("#find-me").on("click", function() {
-          console.log("clicked");
           // Try HTML5 geolocation
         if (navigator.geolocation) {
           navigator.geolocation.getCurrentPosition(function(position) {
@@ -78,11 +52,20 @@
               lat: position.coords.latitude,
               lng: position.coords.longitude
             };
-                 
-            infoWindow.setPosition(pos);
-            infoWindow.setContent('Location found: ' + pos.lat + " , " + pos.lng);
-            infoWindow.open(map);
-            map.setCenter(pos);
+            initMap();
+             
+            var marker = new google.maps.Marker({position: pos, map: map, icon: "https://img.icons8.com/ultraviolet/40/000000/marker.png"});
+            
+            var string = "<p>" + "Location found: " + pos.lat + " , " + pos.lng + "</p>"
+            
+            var infoWindow = new google.maps.InfoWindow({
+                content: string
+              });
+            
+              marker.addListener('click', function() {
+                infoWindow.open(map, marker);
+              });
+
           }, function() {
             handleLocationError(true, infoWindow, map.getCenter());
           });
@@ -108,6 +91,8 @@
                 var marker = new google.maps.Marker({position: location, map: map})               
             });
       }
+    
+    initMap();
         
 
 </script>

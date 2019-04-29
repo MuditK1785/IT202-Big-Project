@@ -1,18 +1,11 @@
 var navItems = [
-  {"label": "Saved History", "screen": "saved-history", "icon": "info"},
-  {"label": "Current Traffic Incidents Map", "screen": "map", "icon": "library_books"},
+  {"label": "Saved History", "screen": "saved-history", "icon": "history"},
+  {"label": "Current Traffic Incidents Map", "screen": "map", "icon": "map"},
   {"label": "About", "screen": "about", "icon": "info"}
-  
-  // ,
-  // {"label": "Google Sign-in", "screen": "google-sign-in", "icon": "person"}
- 
+    
 ];
 
-   
-
 $(document).ready(function() {
-
-
   // initialize all components with auto-init attributes
   window.mdc.autoInit();
 
@@ -36,10 +29,6 @@ $(document).ready(function() {
   });
 
 });
-
-
-
-
 
 /**
  * load nav
@@ -68,7 +57,6 @@ function loadDrawerNavigationElements(navItems) {
   $("nav.mdc-list a:eq(0)").addClass("mdc-list-item--activated");
 
 }
-
 
 /**
  * load screen content via AJAX
